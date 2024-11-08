@@ -75,6 +75,28 @@ class Lexer:
             elif ch == '~':
                 if self.match('='): self.add_token(TOK_NE)
                 else: self.add_token(TOK_NOT)
+            elif ch.isdigit():
+                dot_cnt = 0
+                while self.curr < len(self.source) and (self.peek().isdigit() or self.peek() == '.'):
+                    if self.peek() == '.': dot_cnt = dot_cnt + 1
+                    self.advance()
+
+                if dot_cnt == 0: self.add_token(TOK_INTEGER)
+                elif dot_cnt == 1: self.add_token(TOK_FLOAT)
+            elif ch == '\"' or ch == '\'':
+                while self.curr < len(self.source) and self.peek() != ch:
+                    self.advance()
+                
+                if(self.peek() == ch):
+                    self.start = self.start + 1
+                    self.add_token(TOK_STRING)
+                    self.advance()
+            elif ch.isalpha() or ch == '_':
+                while self.curr < len(self.source) and (self.peek().isalnum() or self.peek() == '_'):
+                    self.advance()
+
+                self.add_token(TOK_IDENTIFIER)
+
         
         return self.tokens
             
