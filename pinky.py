@@ -1,4 +1,5 @@
 import sys
+from utils import *
 from tokens import *
 from lexer import *
 from parser import *
@@ -19,5 +20,5 @@ if __name__ == '__main__':
 
         print("Paser:")
         ast = Paser(tokens).parse()
-        print(ast)
+        pretty_print_ast(ast)
 

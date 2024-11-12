@@ -72,3 +72,5 @@ class Paser:
     def parse(self):
         ast = self.expr()
         return ast
+
+            
