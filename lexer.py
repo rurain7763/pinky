@@ -1,4 +1,5 @@
 from tokens import *
+from utils import *
 
 class Lexer:
     def __init__(self, source):
@@ -102,7 +103,7 @@ class Lexer:
                 if keyword == None: self.add_token(TOK_IDENTIFIER)
                 else: self.add_token(keyword)
             else:
-                raise SyntaxError(f"[Line {self.line}] Error at {ch}: Unexpected character")
+                lexeing_error(f"Error at {ch!r}: Unexpected character", self.line)
         
         return self.tokens
             

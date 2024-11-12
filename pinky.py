@@ -13,12 +13,14 @@ if __name__ == '__main__':
 
     with open(filename) as file:
         source = file.read()
-        print("Lexer:")
+        print(f"{Colors.OKBLUE}------------------Lexer------------------{Colors.ENDC}")
         tokens = Lexer(source).tokenize()
         for token in tokens:
             print(token)
 
-        print("Paser:")
+        print(f"{Colors.OKBLUE}------------------Parser------------------{Colors.ENDC}")
         ast = Paser(tokens).parse()
         pretty_print_ast(ast)
+
+        print(f'{Colors.OKBLUE}-------------------Done-------------------{Colors.ENDC}')
 

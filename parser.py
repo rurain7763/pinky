@@ -1,5 +1,6 @@
 from tokens import *
 from model import *
+from utils import *
 
 class Paser:
     def __init__(self, tokens):
@@ -20,9 +21,9 @@ class Paser:
 
     def expect(self, expected):
         if self.curr >= len(self.tokens):
-            raise SyntaxError(f'Expected {expected!r}, found EOF')
+            parse_error(f'Expected {expected!r}, found EOF', self.previous_token().line)
         elif self.peek().token_type != expected:
-            raise SyntaxError(f'Expected {expected!r}, found {self.peek().token_type!r}')
+            parse_error(f'Expected {expected!r}, found {self.peek().token_type!r}', self.peek().line)
         else:
             return self.advance()
 
@@ -40,7 +41,7 @@ class Paser:
         elif self.match(TOK_LPAREN):
             expr = self.expr()
             if self.match(TOK_RPAREN): return Grouping(expr)
-            else: raise SyntaxError(f'Error: ")" expected.')
+            else: parse_error(f'Error: ")" expected.', self.previous_token().line)
 
     def unary(self):
         if self.match(TOK_PLUS) or self.match(TOK_MINUS) or self.match(TOK_NOT):

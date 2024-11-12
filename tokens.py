@@ -77,11 +77,11 @@ keywords = {
 }
 
 class Token:
-    def __init__(self, token_type, lexeme, line):
-        self.token_type = token_type
-        self.lexeme = lexeme
-        self.line = line
-        pass
+  def __init__(self, token_type, lexeme, line):
+    self.token_type = token_type
+    self.lexeme = lexeme
+    self.line = line
+    pass
 
-    def __repr__(self):
-        return f'({self.token_type}, {self.lexeme!r}, {self.line})'
+  def __repr__(self):
+    return f'({self.token_type}, {self.lexeme!r}, {self.line})'
