@@ -40,9 +40,6 @@ class Lexer:
             elif ch == '\r': pass
             elif ch == '\t': pass
             elif ch == ' ': pass
-            elif ch == '#':
-                while self.curr < len(self.source) and self.peek() != '\n':
-                    self.advance()
             elif ch == '(': self.add_token(TOK_LPAREN)
             elif ch == ')': self.add_token(TOK_RPAREN)
             elif ch == '{': self.add_token(TOK_LCURLY)
@@ -52,7 +49,12 @@ class Lexer:
             elif ch == '.': self.add_token(TOK_DOT)
             elif ch == ',': self.add_token(TOK_COMMA)
             elif ch == '+': self.add_token(TOK_PLUS)
-            elif ch == '-': self.add_token(TOK_MINUS)
+            elif ch == '-':
+                if self.match('-'):
+                    while self.curr < len(self.source) and self.peek() != '\n':
+                        self.advance()
+                else: 
+                    self.add_token(TOK_MINUS)
             elif ch == '*': self.add_token(TOK_STAR)
             elif ch == '^': self.add_token(TOK_CARET)
             elif ch == '/': self.add_token(TOK_SLASH)
@@ -60,7 +62,8 @@ class Lexer:
             elif ch == '?': self.add_token(TOK_QUESTION)
             elif ch == '%': self.add_token(TOK_MOD)
             elif ch == '=':
-                if self.match('='): self.add_token(TOK_EQ)
+                if self.match('='): self.add_token(TOK_EQEQ)
+                else: self.add_toke(TOK_EQ)
             elif ch == ':':
                 if self.match('='): self.add_token(TOK_ASSIGN)
                 else: self.add_token(TOK_COLON)
@@ -95,8 +98,11 @@ class Lexer:
                 while self.curr < len(self.source) and (self.peek().isalnum() or self.peek() == '_'):
                     self.advance()
 
-                self.add_token(TOK_IDENTIFIER)
-
+                keyword = keywords.get(self.source[self.start:self.curr])
+                if keyword == None: self.add_token(TOK_IDENTIFIER)
+                else: self.add_token(keyword)
+            else:
+                raise SyntaxError(f"[Line {self.line}] Error at {ch}: Unexpected character")
         
         return self.tokens
             
