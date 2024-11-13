@@ -7,9 +7,11 @@ def pretty_print_program(program):
     indent_cnt = indent_cnt + 1
     for stmt in program.stmts:
         if isinstance(stmt, PrintStmt):
-            print(f'{' ' * indent_cnt}PrintStmt(')
+            if stmt.end == '': print(f'{' ' * indent_cnt}PrintStmt(')
+            elif stmt.end == '\n': print(f'{' ' * indent_cnt}PrintlnStmt(')
             pretty_print_ast(stmt.value, indent_cnt + 1)
-            print(f'{' ' * indent_cnt})')
+            
+        print(f'{' ' * indent_cnt})')
 
     indent_cnt = 0
     print(f'{' ' * indent_cnt})')

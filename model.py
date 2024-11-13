@@ -82,11 +82,12 @@ class Stmts(Node):
         assert all(isinstance(stmt, Stmt) for stmt in stmts), stmts
         self.stmts = stmts
         self.line = line
-        
+
 class PrintStmt(Stmt):
-    def __init__(self, value : Expr, line):
+    def __init__(self, value : Expr, end, line):
         assert isinstance(value, Expr), value
         self.value = value
+        self.end = end
         self.line = line
 
 class WhileStmt(Stmt):

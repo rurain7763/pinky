@@ -27,5 +27,3 @@ if __name__ == '__main__':
         interpreter = Interpreter()
         interpreter.interpret(program)
 
-        print(f'{Colors.OKBLUE}-------------------Done-------------------{Colors.ENDC}')
-

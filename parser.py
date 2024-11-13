@@ -121,14 +121,16 @@ class Parser:
     def expr(self):
         return self.or_logical()
 
-    def print_stmt(self):
-        if self.match(TOK_PRINT):
+    def print_stmt(self, end):
+        if self.match(TOK_PRINT) or self.match(TOK_PRINTLN):
             val = self.expr()
-            return PrintStmt(val, self.previous_token().line)
+            return PrintStmt(val, end, self.previous_token().line)
 
     def stmt(self):
         if self.peek().token_type == TOK_PRINT:
-            return self.print_stmt()
+            return self.print_stmt('')
+        elif self.peek().token_type == TOK_PRINTLN:
+            return self.print_stmt('\n')
         #elif self.peek().token_type == TOK_IF:
         #    return self.if_stmt()
         #elif self.peek().token_type == TOK_FOR:

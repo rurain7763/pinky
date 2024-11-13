@@ -1,6 +1,7 @@
 from model import *
 from tokens import *
 from utils import *
+import codecs
 
 TYPE_NUMBER = 'TYPE_NUMBER'
 TYPE_BOOL   = 'TYPE_BOOL'
@@ -117,4 +118,4 @@ class Interpreter:
                 self.interpret(stmt)
         elif isinstance(node, PrintStmt):
             type, value = self.interpret(node.value)
-            print(value)
+            print(codecs.escape_decode(bytes(str(value), 'utf-8'))[0].decode('utf-8'), end = node.end)
