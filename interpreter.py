@@ -119,3 +119,12 @@ class Interpreter:
         elif isinstance(node, PrintStmt):
             type, value = self.interpret(node.value)
             print(codecs.escape_decode(bytes(str(value), 'utf-8'))[0].decode('utf-8'), end = node.end)
+        elif isinstance(node, IfStmt):
+            type, value = self.interpret(node.condition)
+            if type != TYPE_BOOL:
+                runtime_error('Condition is not a boolean expression', node.line)
+
+            if value:
+                return self.interpret(node.then_stmts)
+            else:
+                return self.interpret(node.else_stmts)

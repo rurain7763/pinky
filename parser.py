@@ -15,7 +15,7 @@ class Parser:
         self.curr = self.curr + 1
         return token
 
-    def is_next(self, expected):
+    def check(self, expected):
         if self.curr >= len(self.tokens): return False
         return self.peek().token_type == expected
 
@@ -126,13 +126,24 @@ class Parser:
             val = self.expr()
             return PrintStmt(val, end, self.previous_token().line)
 
+    def if_stmt(self):
+        self.expect(TOK_IF)
+        condition = self.expr()
+        self.expect(TOK_THEN)
+        then_stmts = self.stmts()
+        if self.match(TOK_ELSE):
+            else_stmts = self.stmts()
+        else:
+            else_stmts = None
+        return IfStmt(condition, then_stmts, else_stmts, self.previous_token().line)
+
     def stmt(self):
         if self.peek().token_type == TOK_PRINT:
             return self.print_stmt('')
         elif self.peek().token_type == TOK_PRINTLN:
             return self.print_stmt('\n')
-        #elif self.peek().token_type == TOK_IF:
-        #    return self.if_stmt()
+        elif self.peek().token_type == TOK_IF:
+            return self.if_stmt()
         #elif self.peek().token_type == TOK_FOR:
         #    return self.for_stmt()
         #elif self.peek().token_type == TOK_WHILE:
@@ -144,7 +155,7 @@ class Parser:
 
     def stmts(self):
         stmts = []
-        while self.curr < len(self.tokens):
+        while self.curr < len(self.tokens) and not self.check(TOK_ELSE) and not self.check(TOK_END):
             stmts.append(self.stmt())
         return Stmts(stmts, self.previous_token().line)
     

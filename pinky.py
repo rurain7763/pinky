@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
         print(f"{Colors.OKBLUE}------------------Parser------------------{Colors.ENDC}")
         program = Parser(tokens).parse()
-        pretty_print_program(program)
+        pretty_print_stmts(program)
 
         print(f"{Colors.OKBLUE}------------------Interpreter------------------{Colors.ENDC}")
         interpreter = Interpreter()

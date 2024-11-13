@@ -1,20 +1,26 @@
 from model import *
 
-def pretty_print_program(program):
-    indent_cnt = 0
-    print(f'{' ' * indent_cnt}Stmts(')
+def pretty_print_stmts(stmts, indent = 0, prefix = ''):
+    backup_indent = indent
+    print(f'{' ' * indent}{prefix}Stmts(')
 
-    indent_cnt = indent_cnt + 1
-    for stmt in program.stmts:
+    indent = indent + 1
+    for stmt in stmts.stmts:
         if isinstance(stmt, PrintStmt):
-            if stmt.end == '': print(f'{' ' * indent_cnt}PrintStmt(')
-            elif stmt.end == '\n': print(f'{' ' * indent_cnt}PrintlnStmt(')
-            pretty_print_ast(stmt.value, indent_cnt + 1)
+            if stmt.end == '': print(f'{' ' * indent}PrintStmt(')
+            elif stmt.end == '\n': print(f'{' ' * indent}PrintlnStmt(')
+            pretty_print_ast(stmt.value, indent + 1)
+        if isinstance(stmt, IfStmt):
+            print(f'{' ' * indent}IfStmt(')
+            pretty_print_ast(stmt.condition, indent + 1)
+            pretty_print_stmts(stmt.then_stmts, indent + 1, prefix='then:')
+            if stmt.else_stmts:
+                pretty_print_stmts(stmt.else_stmts, indent + 1, prefix='else:')
             
-        print(f'{' ' * indent_cnt})')
+        print(f'{' ' * indent})')
 
-    indent_cnt = 0
-    print(f'{' ' * indent_cnt})')
+    indent = backup_indent
+    print(f'{' ' * indent})')
 
 def pretty_print_ast(ast, indent = 0):
     indent_str = ' ' * indent 

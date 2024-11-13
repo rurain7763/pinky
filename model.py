@@ -90,6 +90,16 @@ class PrintStmt(Stmt):
         self.end = end
         self.line = line
 
+class IfStmt(Stmt):
+    def __init__(self, condition : Expr, then_stmts : Stmts, else_stmts : Stmts, line):
+        assert isinstance(condition, Expr), condition
+        assert isinstance(then_stmts, Stmts), then_stmts
+        assert else_stmts is None or isinstance(else_stmts, Stmts), else_stmts
+        self.condition = condition
+        self.then_stmts = then_stmts
+        self.else_stmts = else_stmts
+        self.line = line
+
 class WhileStmt(Stmt):
     pass
 

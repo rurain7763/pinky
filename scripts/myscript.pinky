@@ -1,4 +1,10 @@
-print 1 + 2
+println 1 + 2
 println 3 * 3 ^ 2
 print("hello world.\n")
 println("test" + 34)
+
+if 2 < 3 then
+    println "this is print in if"
+else
+    println "this is print in else"
+end
