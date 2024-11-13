@@ -1,5 +1,19 @@
 from model import *
 
+def pretty_print_program(program):
+    indent_cnt = 0
+    print(f'{' ' * indent_cnt}Stmts(')
+
+    indent_cnt = indent_cnt + 1
+    for stmt in program.stmts:
+        if isinstance(stmt, PrintStmt):
+            print(f'{' ' * indent_cnt}PrintStmt(')
+            pretty_print_ast(stmt.value, indent_cnt + 1)
+            print(f'{' ' * indent_cnt})')
+
+    indent_cnt = 0
+    print(f'{' ' * indent_cnt})')
+
 def pretty_print_ast(ast, indent = 0):
     indent_str = ' ' * indent 
     if isinstance(ast, Integer):

@@ -20,12 +20,12 @@ if __name__ == '__main__':
             print(token)
 
         print(f"{Colors.OKBLUE}------------------Parser------------------{Colors.ENDC}")
-        ast = Parser(tokens).parse()
-        pretty_print_ast(ast)
+        program = Parser(tokens).parse()
+        pretty_print_program(program)
 
         print(f"{Colors.OKBLUE}------------------Interpreter------------------{Colors.ENDC}")
         interpreter = Interpreter()
-        val = interpreter.interpret(ast)
+        val = interpreter.interpret(program)
         print(val)
 
         print(f'{Colors.OKBLUE}-------------------Done-------------------{Colors.ENDC}')

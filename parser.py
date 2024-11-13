@@ -121,8 +121,35 @@ class Parser:
     def expr(self):
         return self.or_logical()
 
+    def print_stmt(self):
+        if self.match(TOK_PRINT):
+            val = self.expr()
+            return PrintStmt(val, self.previous_token().line)
+
+    def stmt(self):
+        if self.peek().token_type == TOK_PRINT:
+            return self.print_stmt()
+        #elif self.peek().token_type == TOK_IF:
+        #    return self.if_stmt()
+        #elif self.peek().token_type == TOK_FOR:
+        #    return self.for_stmt()
+        #elif self.peek().token_type == TOK_WHILE:
+        #    return self.while_stmt()
+        #elif self.peek().token_type == TOK_FUNC:
+        #    return self.func_stmt()
+        #else:
+            # wtf
+
+    def stmts(self):
+        stmts = []
+        while self.curr < len(self.tokens):
+            stmts.append(self.stmt())
+        return Stmts(stmts, self.previous_token().line)
+    
+    def program(self):
+        return self.stmts()
+
     def parse(self):
-        ast = self.expr()
-        return ast
+        return self.program()
 
             

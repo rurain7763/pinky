@@ -76,6 +76,19 @@ class Grouping(Expr):
         self.value = value
         self.line = line
 
+class Stmts(Node):
+    # a list of statements
+    def __init__(self, stmts, line):
+        assert all(isinstance(stmt, Stmt) for stmt in stmts), stmts
+        self.stmts = stmts
+        self.line = line
+        
+class PrintStmt(Stmt):
+    def __init__(self, value : Expr, line):
+        assert isinstance(value, Expr), value
+        self.value = value
+        self.line = line
+
 class WhileStmt(Stmt):
     pass
 
