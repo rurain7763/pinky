@@ -24,7 +24,17 @@ class Interpreter:
         elif isinstance(ast, BinOp):
             left_type, left_value = self.interpret(ast.left)
             right_type, right_value = self.interpret(ast.right)
-            if ast.op.token_type == TOK_PLUS: 
+            if ast.op.token_type == TOK_OR:
+                if left_type == TYPE_BOOL and right_type == TYPE_BOOL:
+                    return (TYPE_BOOL, left_value or right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_AND:
+                if left_type == TYPE_BOOL and right_type == TYPE_BOOL:
+                    return (TYPE_BOOL, left_value and right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_PLUS: 
                 if left_type == TYPE_NUMBER and right_type == TYPE_NUMBER:
                     return (TYPE_NUMBER, left_value + right_value)
                 elif left_type == TYPE_STRING or right_type == TYPE_STRING:
@@ -76,7 +86,7 @@ class Interpreter:
                     return (TYPE_BOOL, left_value >= right_value)
                 else:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
-            elif ast.op.token_type == TOK_EQ:
+            elif ast.op.token_type == TOK_EQEQ:
                 if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING) or (left_type == TYPE_BOOL and right_type == TYPE_BOOL):
                     return (TYPE_BOOL, left_value == right_value)
                 else:
@@ -101,6 +111,6 @@ class Interpreter:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} at {type}', ast.line)
             elif ast.op.token_type == TOK_NOT: 
                 if type == TYPE_BOOL:
-                    return (TYPE_NUMBER, not val)
+                    return (TYPE_BOOL, not val)
                 else:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} at {type}', ast.line)
