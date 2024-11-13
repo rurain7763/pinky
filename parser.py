@@ -58,7 +58,7 @@ class Paser:
         expr = self.unary()
         while self.match(TOK_CARET): 
             op = self.previous_token()
-            right = self.unary()
+            right = self.exponent()
             expr = BinOp(op, expr, right, op.line)
         return expr
     
