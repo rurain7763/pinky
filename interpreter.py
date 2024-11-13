@@ -56,6 +56,37 @@ class Interpreter:
                     return (TYPE_NUMBER, left_value ** right_value)
                 else:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_LT:
+                if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING):
+                    return (TYPE_BOOL, left_value < right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_GT:
+                if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING):
+                    return (TYPE_BOOL, left_value > right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_LE:
+                if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING):
+                    return (TYPE_BOOL, left_value <= right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_GE:
+                if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING):
+                    return (TYPE_BOOL, left_value >= right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_EQ:
+                if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING) or (left_type == TYPE_BOOL and right_type == TYPE_BOOL):
+                    return (TYPE_BOOL, left_value == right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            elif ast.op.token_type == TOK_NE:
+                if (left_type == TYPE_NUMBER and right_type == TYPE_NUMBER) or (left_type == TYPE_STRING and right_type == TYPE_STRING) or (left_type == TYPE_BOOL and right_type == TYPE_BOOL):
+                    return (TYPE_BOOL, left_value != right_value)
+                else:
+                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+                
         elif isinstance(ast, UnOp):
             type, val = self.interpret(ast.operand)
             if ast.op.token_type == TOK_PLUS: 

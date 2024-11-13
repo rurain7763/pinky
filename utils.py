@@ -1,7 +1,7 @@
 from model import *
 
 def pretty_print_ast(ast, indent = 0):
-    indent_str = '-' * indent 
+    indent_str = ' ' * indent 
     if isinstance(ast, Integer):
         print(f'{indent_str}Integer[{ast.value}]')
     elif isinstance(ast, Float):
