@@ -107,7 +107,7 @@ class Paser:
         while self.match(TOK_AND):
             op = self.previous_token()
             right = self.equality()
-            expr = BinOp(op, expr, right, op.line)
+            expr = LogicalOp(op, expr, right, op.line)
         return expr
 
     def or_logical(self):
@@ -115,7 +115,7 @@ class Paser:
         while self.match(TOK_OR):
             op = self.previous_token()
             right = self.and_logical()
-            expr = BinOp(op, expr, right, op.line)
+            expr = LogicalOp(op, expr, right, op.line)
         return expr
 
     def expr(self):

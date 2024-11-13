@@ -17,9 +17,6 @@ class Integer(Expr):
         assert isinstance(value, int), value
         self.value = value
         self.line = line
-    
-    def __repr__(self):
-        return f'Integer[{self.value}]'
 
 class Float(Expr):
     # 3.141592
@@ -27,9 +24,6 @@ class Float(Expr):
         assert isinstance(value, float), value
         self.value = value
         self.line = line
-    
-    def __repr__(self):
-        return f'Float[{self.value}]'
 
 class Bool(Expr):
     # true, false
@@ -37,9 +31,6 @@ class Bool(Expr):
         assert isinstance(value, bool), value
         self.value = value
         self.line = line
-    
-    def __repr__(self):
-        return f'Bool[{self.value}]'
 
 class String(Expr):
     # true, false
@@ -48,9 +39,6 @@ class String(Expr):
         self.value = value
         self.line = line
     
-    def __repr__(self):
-        return f'String[{self.value}]'
-
 class UnOp(Expr):
     # -x
     def __init__(self, op : Token, operand : Expr, line):
@@ -59,9 +47,6 @@ class UnOp(Expr):
         self.op = op
         self.operand = operand
         self.line = line
-
-    def __repr__(self):
-        return f'UnOp({self.op.lexeme!r}, {self.operand})'
 
 class BinOp(Expr):
     # x + y
@@ -74,8 +59,15 @@ class BinOp(Expr):
         self.right = right
         self.line = line
 
-    def __repr__(self):
-        return f'BinOp({self.op.lexeme!r}, {self.left}, {self.right})'
+class LogicalOp(Expr):
+    def __init__(self, op : Token, left : Expr, right : Expr, line):
+        assert isinstance(op, Token), op
+        assert isinstance(left, Expr), left
+        assert isinstance(right, Expr), right
+        self.op = op
+        self.left = left
+        self.right = right
+        self.line = line
 
 class Grouping(Expr):
     # ( <Expr> )
@@ -83,9 +75,6 @@ class Grouping(Expr):
         assert isinstance(value, Expr), value
         self.value = value
         self.line = line
-
-    def __repr__(self):
-        return f'Grouping({self.value})'
 
 class WhileStmt(Stmt):
     pass

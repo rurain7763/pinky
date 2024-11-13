@@ -18,6 +18,10 @@ def pretty_print_ast(ast, indent = 0):
         elif isinstance(ast, UnOp):
             print(f'{indent_str}UnOp({ast.op.lexeme!r}')
             pretty_print_ast(ast.operand, indent + 1)
+        elif isinstance(ast, LogicalOp):
+            print(f'{indent_str}LogicalOp({ast.op.lexeme!r}')
+            pretty_print_ast(ast.left, indent + 1)
+            pretty_print_ast(ast.right, indent + 1)
         elif isinstance(ast, Grouping):
             print(f'{indent_str}Grouping(')
             pretty_print_ast(ast.value, indent + 1)
