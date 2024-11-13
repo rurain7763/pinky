@@ -20,7 +20,7 @@ if __name__ == '__main__':
             print(token)
 
         print(f"{Colors.OKBLUE}------------------Parser------------------{Colors.ENDC}")
-        ast = Paser(tokens).parse()
+        ast = Parser(tokens).parse()
         pretty_print_ast(ast)
 
         print(f"{Colors.OKBLUE}------------------Interpreter------------------{Colors.ENDC}")

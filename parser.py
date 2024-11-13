@@ -2,7 +2,7 @@ from tokens import *
 from model import *
 from utils import *
 
-class Paser:
+class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.curr = 0

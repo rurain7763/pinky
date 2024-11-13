@@ -43,7 +43,10 @@ class Interpreter:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
             elif ast.op.token_type == TOK_SLASH: 
                 if left_type == TYPE_NUMBER and right_type == TYPE_NUMBER:
-                    return (TYPE_NUMBER, left_value / right_value)
+                    if(right_value == 0):
+                        runtime_error(f'Error: Division by zero', ast.line)
+                    else:
+                        return (TYPE_NUMBER, left_value / right_value)
                 else:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
             elif ast.op.token_type == TOK_MOD:
@@ -105,15 +108,8 @@ class Interpreter:
                     runtime_error(f'Unsupported operator {ast.op.lexeme!r} at {type}', ast.line)
         elif isinstance(ast, LogicalOp):
             left_type, left_value = self.interpret(ast.left)
-            right_type, right_value = self.interpret(ast.right)
-            if ast.op.token_type == TOK_OR:
-                if left_type == TYPE_BOOL and right_type == TYPE_BOOL:
-                    return (TYPE_BOOL, left_value or right_value)
-                else:
-                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
-            elif ast.op.token_type == TOK_AND:
-                if left_type == TYPE_BOOL and right_type == TYPE_BOOL:
-                    return (TYPE_BOOL, left_value and right_value)
-                else:
-                    runtime_error(f'Unsupported operator {ast.op.lexeme!r} between {left_type} and {right_type}', ast.line)
+            if (ast.op.token_type == TOK_AND and left_value) or (ast.op.token_type == TOK_OR and not left_value):
+                return self.interpret(ast.right)
+            else:
+                return (left_type, left_value)
         
