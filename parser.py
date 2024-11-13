@@ -38,6 +38,9 @@ class Paser:
     def primary(self):
         if self.match(TOK_INTEGER): return Integer(int(self.previous_token().lexeme), self.previous_token().line)
         elif self.match(TOK_FLOAT): return Float(float(self.previous_token().lexeme), self.previous_token().line)
+        elif self.match(TOK_TRUE): return Bool(True, self.previous_token().line)
+        elif self.match(TOK_FALSE): return Bool(False, self.previous_token().line)
+        elif self.match(TOK_STRING): return String(self.previous_token().lexeme, self.previous_token().line)
         elif self.match(TOK_LPAREN):
             expr = self.expr()
             if self.match(TOK_RPAREN): return Grouping(expr, self.previous_token().line)

@@ -6,6 +6,10 @@ def pretty_print_ast(ast, indent = 0):
         print(f'{indent_str}Integer[{ast.value}]')
     elif isinstance(ast, Float):
         print(f'{indent_str}Float[{ast.value}]')
+    elif isinstance(ast, Bool):
+        print(f'{indent_str}Bool[{ast.value}]')
+    elif isinstance(ast, String):
+        print(f'{indent_str}String[{ast.value}]')
     else:
         if isinstance(ast, BinOp):
             print(f'{indent_str}BinOp({ast.op.lexeme!r}')
@@ -30,6 +34,11 @@ def lexeing_error(msg, lineno):
     import sys
     sys.exit(1)
 
+def runtime_error(msg, lineno):
+    print(f'{Colors.FAIL}[Line {lineno}] {msg}{Colors.ENDC}')
+    import sys
+    sys.exit(1)
+    
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

@@ -31,6 +31,26 @@ class Float(Expr):
     def __repr__(self):
         return f'Float[{self.value}]'
 
+class Bool(Expr):
+    # true, false
+    def __init__(self, value, line):
+        assert isinstance(value, bool), value
+        self.value = value
+        self.line = line
+    
+    def __repr__(self):
+        return f'Bool[{self.value}]'
+
+class String(Expr):
+    # true, false
+    def __init__(self, value, line):
+        assert isinstance(value, str), value
+        self.value = value
+        self.line = line
+    
+    def __repr__(self):
+        return f'String[{self.value}]'
+
 class UnOp(Expr):
     # -x
     def __init__(self, op : Token, operand : Expr, line):
