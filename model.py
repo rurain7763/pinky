@@ -76,6 +76,13 @@ class Grouping(Expr):
         self.value = value
         self.line = line
 
+class Identifier(Expr):
+    # x, PI, _a, start_val, etc...
+    def __init__(self, name, line):
+        assert isinstance(name, str), name
+        self.name = name
+        self.line = line
+
 class Stmts(Node):
     # a list of statements
     def __init__(self, stmts, line):
@@ -104,4 +111,9 @@ class WhileStmt(Stmt):
     pass
 
 class Assignment(Stmt):
-    pass
+    def __init__(self, left : Expr, right : Expr, line):
+        assert isinstance(left, Expr), left
+        assert isinstance(right, Expr), right
+        self.left = left
+        self.right = right
+        self.line = line

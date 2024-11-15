@@ -10,12 +10,16 @@ def pretty_print_stmts(stmts, indent = 0, prefix = ''):
             if stmt.end == '': print(f'{' ' * indent}PrintStmt(')
             elif stmt.end == '\n': print(f'{' ' * indent}PrintlnStmt(')
             pretty_print_ast(stmt.value, indent + 1)
-        if isinstance(stmt, IfStmt):
+        elif isinstance(stmt, IfStmt):
             print(f'{' ' * indent}IfStmt(')
             pretty_print_ast(stmt.condition, indent + 1)
             pretty_print_stmts(stmt.then_stmts, indent + 1, prefix='then:')
             if stmt.else_stmts:
                 pretty_print_stmts(stmt.else_stmts, indent + 1, prefix='else:')
+        elif isinstance(stmt, Assignment):
+            print(f'{' ' * indent}Assignment(')
+            pretty_print_ast(stmt.left, indent + 1)
+            pretty_print_ast(stmt.right, indent + 1)
             
         print(f'{' ' * indent})')
 
@@ -32,6 +36,8 @@ def pretty_print_ast(ast, indent = 0):
         print(f'{indent_str}Bool[{ast.value}]')
     elif isinstance(ast, String):
         print(f'{indent_str}String[{ast.value}]')
+    elif isinstance(ast, Identifier):
+        print(f'{indent_str}Identifier[{ast.name}]')
     else:
         if isinstance(ast, BinOp):
             print(f'{indent_str}BinOp({ast.op.lexeme!r}')

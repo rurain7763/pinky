@@ -45,6 +45,7 @@ class Parser:
             expr = self.expr()
             if self.match(TOK_RPAREN): return Grouping(expr, self.previous_token().line)
             else: parse_error(f'Error: ")" expected.', self.previous_token().line)
+        elif self.match(TOK_IDENTIFIER): return Identifier(self.previous_token().lexeme, self.previous_token().line)
 
     def unary(self):
         if self.match(TOK_PLUS) or self.match(TOK_MINUS) or self.match(TOK_NOT):
@@ -135,14 +136,15 @@ class Parser:
             else_stmts = self.stmts()
         else:
             else_stmts = None
+        self.expect(TOK_END)
         return IfStmt(condition, then_stmts, else_stmts, self.previous_token().line)
 
     def stmt(self):
-        if self.peek().token_type == TOK_PRINT:
+        if self.check(TOK_PRINT):
             return self.print_stmt('')
-        elif self.peek().token_type == TOK_PRINTLN:
+        elif self.check(TOK_PRINTLN):
             return self.print_stmt('\n')
-        elif self.peek().token_type == TOK_IF:
+        elif self.check(TOK_IF):
             return self.if_stmt()
         #elif self.peek().token_type == TOK_FOR:
         #    return self.for_stmt()
@@ -150,8 +152,13 @@ class Parser:
         #    return self.while_stmt()
         #elif self.peek().token_type == TOK_FUNC:
         #    return self.func_stmt()
-        #else:
-            # wtf
+        else:
+            left = self.expr()
+            if self.match(TOK_ASSIGN):
+                right = self.expr()
+                return Assignment(left, right, self.previous_token().line)
+            else:
+                pass
 
     def stmts(self):
         stmts = []

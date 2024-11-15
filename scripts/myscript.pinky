@@ -3,8 +3,12 @@ println 3 * 3 ^ 2
 print("hello world.\n")
 println("test" + 34)
 
+x := 0
+
 if 2 < 3 then
     println "this is print in if"
 else
     println "this is print in else"
 end
+
+x := x + 1
