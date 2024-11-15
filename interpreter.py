@@ -1,6 +1,7 @@
 from model import *
 from tokens import *
 from utils import *
+from state import *
 import codecs
 
 TYPE_NUMBER = 'TYPE_NUMBER'
@@ -8,10 +9,7 @@ TYPE_BOOL   = 'TYPE_BOOL'
 TYPE_STRING = 'TYPE_STRING'
 
 class Interpreter:
-    def __init__(self):
-        pass
-
-    def interpret(self, node):
+    def interpret(self, node : Node, env : Environment):
         if isinstance(node, Integer):
             return (TYPE_NUMBER, float(node.value))
         elif isinstance(node, Float):
@@ -21,10 +19,18 @@ class Interpreter:
         elif isinstance(node, String):
             return (TYPE_STRING, node.value)
         elif isinstance(node, Grouping):
-            return self.interpret(node.value)
+            return self.interpret(node.value, env)
+        elif isinstance(node, Identifier):
+            value = env.get_value(node.name)
+            if value == None:
+                runtime_error(f"Undeclared identifier {node.name}", node.line)
+            elif value[1] == None:
+                runtime_error(f"Uninitialized identifier {node.name}", node.line)
+            else:
+                return value
         elif isinstance(node, BinOp):
-            left_type, left_value = self.interpret(node.left)
-            right_type, right_value = self.interpret(node.right)
+            left_type, left_value = self.interpret(node.left, env)
+            right_type, right_value = self.interpret(node.right, env)
             if node.op.token_type == TOK_PLUS: 
                 if left_type == TYPE_NUMBER and right_type == TYPE_NUMBER:
                     return (TYPE_NUMBER, left_value + right_value)
@@ -91,7 +97,7 @@ class Interpreter:
                 else:
                     runtime_error(f'Unsupported operator {node.op.lexeme!r} between {left_type} and {right_type}', node.line)
         elif isinstance(node, UnOp):
-            type, val = self.interpret(node.operand)
+            type, val = self.interpret(node.operand, env)
             if node.op.token_type == TOK_PLUS: 
                 if type == TYPE_NUMBER:
                     return (TYPE_NUMBER, +val)
@@ -108,24 +114,30 @@ class Interpreter:
                 else:
                     runtime_error(f'Unsupported operator {node.op.lexeme!r} at {type}', node.line)
         elif isinstance(node, LogicalOp):
-            left_type, left_value = self.interpret(node.left)
+            left_type, left_value = self.interpret(node.left, env)
             if (node.op.token_type == TOK_AND and left_value) or (node.op.token_type == TOK_OR and not left_value):
-                return self.interpret(node.right)
+                return self.interpret(node.right, env)
             else:
                 return (left_type, left_value)
         elif isinstance(node, Stmts):
             for stmt in node.stmts:
-                self.interpret(stmt)
+                self.interpret(stmt, env)
         elif isinstance(node, PrintStmt):
-            type, value = self.interpret(node.value)
+            type, value = self.interpret(node.value, env)
             print(codecs.escape_decode(bytes(str(value), 'utf-8'))[0].decode('utf-8'), end = node.end)
         elif isinstance(node, IfStmt):
-            type, value = self.interpret(node.condition)
+            type, value = self.interpret(node.condition, env)
             if type != TYPE_BOOL:
                 runtime_error('Condition is not a boolean expression', node.line)
 
             if value:
-                return self.interpret(node.then_stmts)
+                return self.interpret(node.then_stmts, env.new_env())
             else:
-                return self.interpret(node.else_stmts)
+                return self.interpret(node.else_stmts, env.new_env())
+        elif isinstance(node, Assignment):
+            r_type, r_value = self.interpret(node.right, env)
+            env.set_vale(node.left.name, (r_type, r_value))
 
+    def interpret_program(self, ast):
+        env = Environment()
+        self.interpret(ast, env)

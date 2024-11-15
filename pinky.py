@@ -25,5 +25,5 @@ if __name__ == '__main__':
 
         print(f"{Colors.OKBLUE}------------------Interpreter------------------{Colors.ENDC}")
         interpreter = Interpreter()
-        interpreter.interpret(program)
+        interpreter.interpret_program(program)
 

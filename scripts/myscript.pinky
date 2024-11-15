@@ -5,10 +5,15 @@ println("test" + 34)
 
 x := 0
 
-if 2 < 3 then
-    println "this is print in if"
+if x > 3 then
+    println "x is greater than 3"
 else
-    println "this is print in else"
+    println "x is less or equal than 3"
+    y := 10
+    println "y is local varialbe that " + y
 end
 
 x := x + 1
+-- x := y -- this occured error
+
+println("current x is " + x)
