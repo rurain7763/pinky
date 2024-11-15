@@ -69,6 +69,16 @@ def pretty_print_ast(ast, indent = 0, prefix = ''):
 
         print(f'{indent_str})')
 
+def stringify(value):
+    if isinstance(value, bool) and value is True:
+        return "true"
+    elif isinstance(value, bool) and value is False:
+        return "false"
+    elif isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    else:
+        return str(value)
+
 def parse_error(msg, lineno):
     print(f'{Colors.FAIL}[Line {lineno}] {msg}{Colors.ENDC}')
     import sys

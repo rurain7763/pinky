@@ -35,7 +35,7 @@ class Interpreter:
                 if left_type == TYPE_NUMBER and right_type == TYPE_NUMBER:
                     return (TYPE_NUMBER, left_value + right_value)
                 elif left_type == TYPE_STRING or right_type == TYPE_STRING:
-                    return (TYPE_STRING, str(left_value) + str(right_value))
+                    return (TYPE_STRING, stringify(left_value) + stringify(right_value))
                 else:
                     runtime_error(f'Unsupported operator {node.op.lexeme!r} between {left_type} and {right_type}', node.line)
             elif node.op.token_type == TOK_MINUS: 
@@ -124,6 +124,7 @@ class Interpreter:
                 self.interpret(stmt, env)
         elif isinstance(node, PrintStmt):
             type, value = self.interpret(node.value, env)
+            value = stringify(value)
             print(codecs.escape_decode(bytes(str(value), 'utf-8'))[0].decode('utf-8'), end = node.end)
         elif isinstance(node, IfStmt):
             type, value = self.interpret(node.condition, env)
