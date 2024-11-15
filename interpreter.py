@@ -130,13 +130,49 @@ class Interpreter:
             if type != TYPE_BOOL:
                 runtime_error('Condition is not a boolean expression', node.line)
 
-            if value:
-                return self.interpret(node.then_stmts, env.new_env())
-            else:
-                return self.interpret(node.else_stmts, env.new_env())
+            if value: self.interpret(node.then_stmts, env.new_env())
+            else: self.interpret(node.else_stmts, env.new_env())
         elif isinstance(node, Assignment):
             r_type, r_value = self.interpret(node.right, env)
             env.set_vale(node.left.name, (r_type, r_value))
+        elif isinstance(node, WhileStmt):
+            type, value = self.interpret(node.condition, env)
+            if type != TYPE_BOOL:
+                runtime_error('Condition is not a boolean expression', node.line)
+
+            while value:
+                self.interpret(node.do_stmts, env.new_env())
+                type, value = self.interpret(node.condition, env)
+        elif isinstance(node, ForStmt):
+            new_env = env.new_env()
+            self.interpret(node.assignment, new_env)
+            cond_type, cond_val = self.interpret(node.condition_val, new_env)
+            if cond_type != TYPE_NUMBER:
+                runtime_error('Condition is not a number expression', node.line)
+
+            if node.step_val != None:
+                step_type, step_val = self.interpret(node.step_val, new_env)
+                if step_type != TYPE_NUMBER:
+                    runtime_error('Step is not a number expression', node.line)
+            else:
+                step_type = TYPE_NUMBER
+                step_val = 1
+
+            var_name = node.assignment.left.name
+            cur_type, cur_val = new_env.get_value(var_name)
+            if cur_val <= cond_val:
+                while cur_val <= cond_val:
+                    self.interpret(node.do_stmts, new_env.new_env())
+                    cur_type, cur_val = new_env.get_value(var_name)
+                    cur_val = cur_val + step_val
+                    new_env.set_vale(var_name, (cur_type, cur_val))
+            else:
+                if node.step_val == None: step_val = -1
+                while cur_val >= cond_val:
+                    self.interpret(node.do_stmts, new_env.new_env())
+                    cur_type, cur_val = new_env.get_value(var_name)
+                    cur_val = cur_val + step_val
+                    new_env.set_vale(var_name, (cur_type, cur_val))
 
     def interpret_program(self, ast):
         env = Environment()

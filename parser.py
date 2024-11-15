@@ -139,6 +139,26 @@ class Parser:
         self.expect(TOK_END)
         return IfStmt(condition, then_stmts, else_stmts, self.previous_token().line)
 
+    def while_stmt(self):
+        self.expect(TOK_WHILE)
+        condition = self.expr()
+        self.expect(TOK_DO)
+        do_stmts = self.stmts()
+        self.expect(TOK_END)
+        return WhileStmt(condition, do_stmts, self.previous_token().line)
+
+    def for_stmt(self):
+        self.expect(TOK_FOR)
+        assignment = self.stmt()
+        self.expect(TOK_COMMA)
+        condition_val = self.expr()
+        if self.match(TOK_COMMA): step_val = self.expr()
+        else: step_val = None
+        self.expect(TOK_DO)
+        do_stmts = self.stmts()
+        self.expect(TOK_END)
+        return ForStmt(assignment, condition_val, step_val, do_stmts, self.previous_token().line)
+
     def stmt(self):
         if self.check(TOK_PRINT):
             return self.print_stmt('')
@@ -146,10 +166,10 @@ class Parser:
             return self.print_stmt('\n')
         elif self.check(TOK_IF):
             return self.if_stmt()
-        #elif self.peek().token_type == TOK_FOR:
-        #    return self.for_stmt()
-        #elif self.peek().token_type == TOK_WHILE:
-        #    return self.while_stmt()
+        elif self.check(TOK_WHILE):
+            return self.while_stmt()
+        elif self.check(TOK_FOR):
+            return self.for_stmt()
         #elif self.peek().token_type == TOK_FUNC:
         #    return self.func_stmt()
         else:

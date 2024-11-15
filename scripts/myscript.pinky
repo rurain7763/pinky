@@ -14,6 +14,15 @@ else
 end
 
 x := x + 1
+println("current x is " + x)
 -- x := y -- this occured error
 
-println("current x is " + x)
+i := 1
+while i <= 10 do
+    println "current i is " + i
+    i := i + 1
+end
+
+for num := 10, 1 do
+    println "current num is " + num
+end

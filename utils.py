@@ -1,37 +1,50 @@
 from model import *
 
+def print_stmt(stmt, indent = 0):
+    if isinstance(stmt, PrintStmt):
+        if stmt.end == '': print(f'{' ' * indent}PrintStmt(')
+        elif stmt.end == '\n': print(f'{' ' * indent}PrintlnStmt(')
+        pretty_print_ast(stmt.value, indent + 1)
+    elif isinstance(stmt, IfStmt):
+        print(f'{' ' * indent}IfStmt(')
+        pretty_print_ast(stmt.condition, indent + 1)
+        pretty_print_stmts(stmt.then_stmts, indent + 1, prefix='then:')
+        if stmt.else_stmts:
+            pretty_print_stmts(stmt.else_stmts, indent + 1, prefix='else:')
+    elif isinstance(stmt, Assignment):
+        print(f'{' ' * indent}Assignment(')
+        pretty_print_ast(stmt.left, indent + 1)
+        pretty_print_ast(stmt.right, indent + 1)
+    elif isinstance(stmt, WhileStmt):
+        print(f'{' ' * indent}WhileStmt(')
+        pretty_print_ast(stmt.condition, indent + 1)
+        pretty_print_stmts(stmt.do_stmts, indent + 1, prefix='do:')
+    elif isinstance(stmt, ForStmt):
+        print(f'{' ' * indent}ForStmt(')
+        print_stmt(stmt.assignment, indent + 1)
+        pretty_print_ast(stmt.condition_val, indent + 1, prefix='cond:')
+        pretty_print_ast(stmt.step_val, indent + 1, prefix='inc:')
+        pretty_print_stmts(stmt.do_stmts, indent + 1, prefix='do:')
+            
+    print(f'{' ' * indent})')
+
 def pretty_print_stmts(stmts, indent = 0, prefix = ''):
     backup_indent = indent
     print(f'{' ' * indent}{prefix}Stmts(')
 
     indent = indent + 1
     for stmt in stmts.stmts:
-        if isinstance(stmt, PrintStmt):
-            if stmt.end == '': print(f'{' ' * indent}PrintStmt(')
-            elif stmt.end == '\n': print(f'{' ' * indent}PrintlnStmt(')
-            pretty_print_ast(stmt.value, indent + 1)
-        elif isinstance(stmt, IfStmt):
-            print(f'{' ' * indent}IfStmt(')
-            pretty_print_ast(stmt.condition, indent + 1)
-            pretty_print_stmts(stmt.then_stmts, indent + 1, prefix='then:')
-            if stmt.else_stmts:
-                pretty_print_stmts(stmt.else_stmts, indent + 1, prefix='else:')
-        elif isinstance(stmt, Assignment):
-            print(f'{' ' * indent}Assignment(')
-            pretty_print_ast(stmt.left, indent + 1)
-            pretty_print_ast(stmt.right, indent + 1)
-            
-        print(f'{' ' * indent})')
+        print_stmt(stmt, indent)
 
     indent = backup_indent
     print(f'{' ' * indent})')
 
-def pretty_print_ast(ast, indent = 0):
+def pretty_print_ast(ast, indent = 0, prefix = ''):
     indent_str = ' ' * indent 
     if isinstance(ast, Integer):
-        print(f'{indent_str}Integer[{ast.value}]')
+        print(f'{indent_str}{prefix}Integer[{ast.value}]')
     elif isinstance(ast, Float):
-        print(f'{indent_str}Float[{ast.value}]')
+        print(f'{indent_str}{prefix}Float[{ast.value}]')
     elif isinstance(ast, Bool):
         print(f'{indent_str}Bool[{ast.value}]')
     elif isinstance(ast, String):
