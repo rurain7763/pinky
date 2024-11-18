@@ -7,3 +7,4 @@ func factorial(n)
 end
 
 factorial(5)
+factorial(6)

@@ -139,25 +139,25 @@ class ForStmt(Stmt):
         self.line = line   
 
 class Param(Decl):
-    def __init__(self, name, line):
-        assert isinstance(name, Identifier), name
-        self.name = name
+    def __init__(self, identifier, line):
+        assert isinstance(identifier, Identifier), identifier
+        self.identifier = identifier
         self.line = line
 
 class FuncDecl(Decl):
-    def __init__(self, name, params, body_stmts, line):
-        assert isinstance(name, Identifier), name
+    def __init__(self, identifier, params, body_stmts, line):
+        assert isinstance(identifier, Identifier), identifier
         assert all(isinstance(param, Param) for param in params), params
-        self.name = name
+        self.identifier = identifier
         self.params = params
         self.body_stmts = body_stmts
         self.line = line
 
 class FuncCall(Expr):
-    def __init__(self, name, args, line):
-        assert isinstance(name, Identifier), name
+    def __init__(self, identifier, args, line):
+        assert isinstance(identifier, Identifier), identifier
         assert all(isinstance(arg, Expr) for arg in args), args
-        self.name = name
+        self.identifier = identifier
         self.args = args
         self.line = line
 

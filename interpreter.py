@@ -135,7 +135,7 @@ class Interpreter:
             else: self.interpret(node.else_stmts, env.new_env())
         elif isinstance(node, Assignment):
             r_type, r_value = self.interpret(node.right, env)
-            env.set_vale(node.left.name, (r_type, r_value))
+            env.set_value(node.left.name, (r_type, r_value))
         elif isinstance(node, WhileStmt):
             type, value = self.interpret(node.condition, env)
             if type != TYPE_BOOL:
@@ -166,15 +166,31 @@ class Interpreter:
                     self.interpret(node.do_stmts, new_env.new_env())
                     cur_type, cur_val = new_env.get_value(var_name)
                     cur_val = cur_val + step_val
-                    new_env.set_vale(var_name, (cur_type, cur_val))
+                    new_env.set_value(var_name, (cur_type, cur_val))
             else:
                 if node.step_val == None: step_val = -1
                 while cur_val >= cond_val:
                     self.interpret(node.do_stmts, new_env.new_env())
                     cur_type, cur_val = new_env.get_value(var_name)
                     cur_val = cur_val + step_val
-                    new_env.set_vale(var_name, (cur_type, cur_val))
+                    new_env.set_value(var_name, (cur_type, cur_val))
+        elif isinstance(node, FuncDecl):
+            env.set_func(node.identifier.name, (node, env))
+        elif isinstance(node, FuncCall):
+            func, func_org_env = env.get_func(node.identifier.name)
+
+            if func == None:
+                runtime_error(f"Function {node.identifier.name} not declared", node.line)
+            if len(func.params) != len(node.args):
+                runtime_error(f"Function {node.identifier.name} expected {len(func.params)} arguments, but {len(node.args)} arguments were passed", node.line)
+
+            new_env = func_org_env.new_env()
+            for i in range(0, len(func.params)):
+                new_env.set_value(func.params[i].identifier.name, self.interpret(node.args[i], env))
+
+            self.interpret(func.body_stmts, new_env)
+        elif isinstance(node, FuncCallStmt):
+            self.interpret(node.func_call, env)
 
     def interpret_program(self, ast):
-        env = Environment()
-        self.interpret(ast, env)
+        self.interpret(ast, Environment())

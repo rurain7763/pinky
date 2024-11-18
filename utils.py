@@ -27,13 +27,13 @@ def print_stmt(stmt, indent = 0):
         pretty_print_stmts(stmt.do_stmts, indent + 1, prefix='do:')
     elif isinstance(stmt, FuncDecl):
         print(f'{' ' * indent}FuncDecl(')
-        pretty_print_ast(stmt.name, indent + 1, prefix='name:')
+        pretty_print_ast(stmt.identifier, indent + 1, prefix='name:')
         for param in stmt.params:
             print_stmt(param, indent + 1)
         pretty_print_stmts(stmt.body_stmts, indent + 1, prefix='body:')
     elif isinstance(stmt, Param):
         print(f'{' ' * indent}Param(')
-        pretty_print_ast(stmt.name, indent + 1)
+        pretty_print_ast(stmt.identifier, indent + 1)
     elif isinstance(stmt, FuncCallStmt):
         print(f'{' ' * indent}FuncCallStmt(')
         pretty_print_ast(stmt.func_call, indent + 1)
@@ -80,7 +80,7 @@ def pretty_print_ast(ast, indent = 0, prefix = ''):
             pretty_print_ast(ast.value, indent + 1)
         elif isinstance(ast, FuncCall):
             print(f'{indent_str}FuncCall(')
-            pretty_print_ast(ast.name, indent + 1)
+            pretty_print_ast(ast.identifier, indent + 1)
             for arg in ast.args:
                 pretty_print_ast(arg, indent + 1)
 
