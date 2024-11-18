@@ -188,9 +188,17 @@ class Interpreter:
             for i in range(0, len(func.params)):
                 new_env.set_value(func.params[i].identifier.name, self.interpret(node.args[i], env))
 
-            self.interpret(func.body_stmts, new_env)
+            try:
+                self.interpret(func.body_stmts, new_env)
+            except Return as e:
+                return e.args[0]
         elif isinstance(node, FuncCallStmt):
             self.interpret(node.func_call, env)
+        elif isinstance(node, RetStmt):
+            raise Return(self.interpret(node.value, env))
 
     def interpret_program(self, ast):
         self.interpret(ast, Environment())
+
+class Return(Exception):
+    pass

@@ -165,3 +165,9 @@ class FuncCallStmt(Stmt):
     def __init__(self, func_call : FuncCall):
         assert isinstance(func_call, FuncCall)
         self.func_call = func_call
+
+class RetStmt(Stmt):
+    def __init__(self, value : Expr, line):
+        assert isinstance(value, Expr)
+        self.value = value
+        self.line = line

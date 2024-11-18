@@ -37,6 +37,9 @@ def print_stmt(stmt, indent = 0):
     elif isinstance(stmt, FuncCallStmt):
         print(f'{' ' * indent}FuncCallStmt(')
         pretty_print_ast(stmt.func_call, indent + 1)
+    elif isinstance(stmt, RetStmt):
+        print(f'{' ' * indent}RetStmt(')
+        pretty_print_ast(stmt.value, indent + 1)
             
     print(f'{' ' * indent})')
 

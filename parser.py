@@ -191,6 +191,10 @@ class Parser:
         self.expect(TOK_END)
         return FuncDecl(identifier, params, body_stmts, self.previous_token().line)
 
+    def ret_stmt(self):
+        self.expect(TOK_RET)
+        return RetStmt(self.expr(), self.previous_token().line)
+
     def stmt(self):
         if self.check(TOK_PRINT):
             return self.print_stmt('')
@@ -204,6 +208,8 @@ class Parser:
             return self.for_stmt()
         elif self.check(TOK_FUNC):
             return self.func_decl()
+        elif self.check(TOK_RET):
+            return self.ret_stmt()
         else:
             left = self.expr()
             if self.match(TOK_ASSIGN):
