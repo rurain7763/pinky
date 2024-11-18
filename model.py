@@ -11,6 +11,9 @@ class Stmt(Node):
     # perform action (while, if, assign, etc)
     pass
 
+class Decl(Stmt):
+    pass
+
 class Integer(Expr):
     # 123
     def __init__(self, value, line):
@@ -134,3 +137,31 @@ class ForStmt(Stmt):
         self.step_val = step_val
         self.do_stmts = do_stmts     
         self.line = line   
+
+class Param(Decl):
+    def __init__(self, name, line):
+        assert isinstance(name, Identifier), name
+        self.name = name
+        self.line = line
+
+class FuncDecl(Decl):
+    def __init__(self, name, params, body_stmts, line):
+        assert isinstance(name, Identifier), name
+        assert all(isinstance(param, Param) for param in params), params
+        self.name = name
+        self.params = params
+        self.body_stmts = body_stmts
+        self.line = line
+
+class FuncCall(Expr):
+    def __init__(self, name, args, line):
+        assert isinstance(name, Identifier), name
+        assert all(isinstance(arg, Expr) for arg in args), args
+        self.name = name
+        self.args = args
+        self.line = line
+
+class FuncCallStmt(Stmt):
+    def __init__(self, func_call : FuncCall):
+        assert isinstance(func_call, FuncCall)
+        self.func_call = func_call

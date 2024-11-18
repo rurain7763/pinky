@@ -45,7 +45,16 @@ class Parser:
             expr = self.expr()
             if self.match(TOK_RPAREN): return Grouping(expr, self.previous_token().line)
             else: parse_error(f'Error: ")" expected.', self.previous_token().line)
-        elif self.match(TOK_IDENTIFIER): return Identifier(self.previous_token().lexeme, self.previous_token().line)
+        elif self.match(TOK_IDENTIFIER): 
+            identifier = Identifier(self.previous_token().lexeme, self.previous_token().line)
+            if self.match(TOK_LPAREN):
+                args = []
+                while not self.match(TOK_RPAREN):
+                    args.append(self.expr())
+                    self.match(TOK_COMMA)
+                return FuncCall(identifier, args, self.previous_token().line)
+            else:
+                return identifier
 
     def unary(self):
         if self.match(TOK_PLUS) or self.match(TOK_MINUS) or self.match(TOK_NOT):
@@ -159,6 +168,20 @@ class Parser:
         self.expect(TOK_END)
         return ForStmt(assignment, condition_val, step_val, do_stmts, self.previous_token().line)
 
+    def func_decl(self):
+        self.expect(TOK_FUNC)
+        self.expect(TOK_IDENTIFIER)
+        name = Identifier(self.previous_token().lexeme, self.previous_token().line)
+        self.expect(TOK_LPAREN)
+        params = []
+        while not self.match(TOK_RPAREN):
+            self.expect(TOK_IDENTIFIER)
+            params.append(Param(Identifier(self.previous_token().lexeme, self.previous_token().line), self.previous_token().line))
+            self.match(TOK_COMMA)
+        body_stmts = self.stmts()
+        self.expect(TOK_END)
+        return FuncDecl(name, params, body_stmts, self.previous_token().line)
+
     def stmt(self):
         if self.check(TOK_PRINT):
             return self.print_stmt('')
@@ -170,15 +193,15 @@ class Parser:
             return self.while_stmt()
         elif self.check(TOK_FOR):
             return self.for_stmt()
-        #elif self.peek().token_type == TOK_FUNC:
-        #    return self.func_stmt()
+        elif self.check(TOK_FUNC):
+            return self.func_decl()
         else:
             left = self.expr()
             if self.match(TOK_ASSIGN):
                 right = self.expr()
                 return Assignment(left, right, self.previous_token().line)
             else:
-                pass
+                return FuncCallStmt(left)
 
     def stmts(self):
         stmts = []
