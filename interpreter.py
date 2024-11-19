@@ -186,7 +186,7 @@ class Interpreter:
 
             new_env = func_org_env.new_env()
             for i in range(0, len(func.params)):
-                new_env.set_value(func.params[i].identifier.name, self.interpret(node.args[i], env))
+                new_env.set_value_as_local(func.params[i].identifier.name, self.interpret(node.args[i], env))
 
             try:
                 self.interpret(func.body_stmts, new_env)

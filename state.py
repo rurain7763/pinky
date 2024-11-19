@@ -18,11 +18,13 @@ class Environment:
         while env != None:
             if name in env.vars:
                 env.vars[name] = value
-                return env.vars[name]
+                pass
             env = env.parent
 
         self.vars[name] = value
-        return self.vars[name]
+    
+    def set_value_as_local(self, name, value):
+        self.vars[name] = value
     
     def get_func(self, name):
         env = self
@@ -35,7 +37,6 @@ class Environment:
 
     def set_func(self, name, value):
         self.funcs[name] = value
-        return self.funcs[name]
 
     def new_env(self):
         return Environment(parent=self)
