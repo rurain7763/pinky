@@ -89,6 +89,17 @@ def pretty_print_ast(ast, indent = 0, prefix = ''):
 
         print(f'{indent_str})')
 
+def pretty_print_instructions(instructions):
+    i = 0
+    while i < len(instructions):
+        if instructions[i][0] == 'LABEL':
+            print(f'{instructions[i][1]}:')
+        elif instructions[i][1] != None: 
+            print(f' {instructions[i][0]} {stringify(instructions[i][1][1])}')
+        else:
+            print(f' {instructions[i][0]}')
+        i += 1
+
 def stringify(value):
     if isinstance(value, bool) and value is True:
         return "true"
