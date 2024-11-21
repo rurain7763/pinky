@@ -94,7 +94,7 @@ def pretty_print_instructions(instructions):
     while i < len(instructions):
         if instructions[i][0] == 'LABEL':
             print(f'{instructions[i][1]}:')
-        elif instructions[i][1] != None: 
+        elif len(instructions[i]) > 1: 
             print(f' {instructions[i][0]} {stringify(instructions[i][1][1])}')
         else:
             print(f' {instructions[i][0]}')
@@ -125,6 +125,11 @@ def runtime_error(msg, lineno):
     import sys
     sys.exit(1)
     
+def vm_error(msg, pc):
+    print(f'{Colors.FAIL}[PC {pc}] {msg}{Colors.ENDC}')
+    import sys
+    sys.exit(1)
+
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

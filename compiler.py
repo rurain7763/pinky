@@ -2,10 +2,7 @@ from model import *
 from tokens import *
 from utils import *
 from state import *
-
-TYPE_NUMBER = 'TYPE_NUMBER'
-TYPE_BOOL   = 'TYPE_BOOL'
-TYPE_STRING = 'TYPE_STRING'
+from defs import *
 
 class Compiler:
     def __init__(self):
@@ -33,55 +30,55 @@ class Compiler:
             self.compile(node.left)
             self.compile(node.right)
             if node.op.token_type == TOK_PLUS:
-                self.emit(('ADD', None))
+                self.emit(('ADD',))
             elif node.op.token_type == TOK_MINUS:
-                self.emit(('SUB', None))
+                self.emit(('SUB',))
             elif node.op.token_type == TOK_STAR:
-                self.emit(('MUL', None))
+                self.emit(('MUL',))
             elif node.op.token_type == TOK_SLASH:
-                self.emit(('DIV', None))
+                self.emit(('DIV',))
             elif node.op.token_type == TOK_MOD:
-                self.emit(('MOD', None))
+                self.emit(('MOD',))
             elif node.op.token_type == TOK_CARET:
-                self.emit(('EXP', None))
+                self.emit(('EXP',))
             elif node.op.token_type == TOK_LT:
-                self.emit(('LT', None))
+                self.emit(('LT',))
             elif node.op.token_type == TOK_GT:
-                self.emit(('GT', None))
+                self.emit(('GT',))
             elif node.op.token_type == TOK_LE:
-                self.emit(('LE', None))
+                self.emit(('LE',))
             elif node.op.token_type == TOK_GE:
-                self.emit(('GE', None))
+                self.emit(('GE',))
             elif node.op.token_type == TOK_EQEQ:
-                self.emit(('EQ', None))
+                self.emit(('EQ',))
             elif node.op.token_type == TOK_NE:
-                self.emit(('NE', None))
+                self.emit(('NE',))
         elif isinstance(node, UnOp):
             self.compile(node.operand)
             if node.op.token_type == TOK_MINUS:
-                self.emit(('NEG', None))
+                self.emit(('NEG',))
             elif node.op.token_type == TOK_NOT:
                 self.emit(('PUSH', (TYPE_NUMBER, 1)))
-                self.emit(('XOR', None))
+                self.emit(('XOR',))
         elif isinstance(node, LogicalOp):
             self.compile(node.left)
             self.compile(node.right)
             if node.op.token_type == TOK_AND:
-                self.emit(('AND', None))
+                self.emit(('AND',))
             elif node.op.token_type == TOK_OR:
-                self.emit(('OR', None))
+                self.emit(('OR',))
         elif isinstance(node, Stmts):
             for stmt in node.stmts:
                 self.compile(stmt)
         elif isinstance(node, PrintStmt):
             self.compile(node.value)
             if node.end == '\n':
-                self.emit(('PRINTLN', None))
+                self.emit(('PRINTLN',))
             else:
-                self.emit(('PRINT', None))
+                self.emit(('PRINT',))
 
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))
         self.compile(root)
-        self.emit(('HALT', None))
+        self.emit(('HALT',))
         return self.code

@@ -2,11 +2,8 @@ from model import *
 from tokens import *
 from utils import *
 from state import *
+from defs import *
 import codecs
-
-TYPE_NUMBER = 'TYPE_NUMBER'
-TYPE_BOOL   = 'TYPE_BOOL'
-TYPE_STRING = 'TYPE_STRING'
 
 class Interpreter:
     def interpret(self, node : Node, env : Environment):
