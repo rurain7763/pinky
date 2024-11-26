@@ -63,12 +63,21 @@ import codecs
 class VM:
     def __init__(self):
         self.stack = []
+        self.labels = {}
         self.pc = 0
         self.sp = 0
         self.is_running = False
 
+    def create_label_talbe(self, instructions):
+        for idx, instruction in enumerate(instructions):
+            if instruction[0] == 'LABEL':
+                self.labels[instruction[1]] = idx
+
     def run(self, instructions):
         self.is_running = True
+
+        self.create_label_talbe(instructions)
+
         while self.is_running:
             opcode, *args = instructions[self.pc]
             self.pc += 1
@@ -95,7 +104,7 @@ class VM:
         elif type1 == TYPE_STRING or type2 == TYPE_STRING:
             self.PUSH((TYPE_STRING, stringify(value1) + stringify(value2)))
         else:
-            vm_error(f'Unsupported operator ADD between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator ADD between {type1} and {type2}', self.pc - 1)
 
     def SUB(self):
         type2, value2 = self.POP()
@@ -104,7 +113,7 @@ class VM:
         if type1 == TYPE_NUMBER and type2 == TYPE_NUMBER:
             self.PUSH((TYPE_NUMBER, value1 - value2))
         else:
-            vm_error(f'Unsupported operator SUB between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator SUB between {type1} and {type2}', self.pc - 1)
 
     def MUL(self):
         type2, value2 = self.POP()
@@ -113,7 +122,7 @@ class VM:
         if type1 == TYPE_NUMBER and type2 == TYPE_NUMBER:
             self.PUSH((TYPE_NUMBER, value1 * value2))
         else:
-            vm_error(f'Unsupported operator MUL between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator MUL between {type1} and {type2}', self.pc - 1)
 
     def DIV(self):
         type2, value2 = self.POP()
@@ -124,7 +133,7 @@ class VM:
                 vm_error(f'Division by zero')
             self.PUSH((TYPE_NUMBER, value1 / value2))
         else:
-            vm_error(f'Unsupported operator DIV between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator DIV between {type1} and {type2}', self.pc - 1)
 
     def MOD(self):
         type2, value2 = self.POP()
@@ -135,7 +144,7 @@ class VM:
                 vm_error(f'Mod by zero')
             self.PUSH((TYPE_NUMBER, value1 % value2))
         else:
-            vm_error(f'Unsupported operator MOD between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator MOD between {type1} and {type2}', self.pc - 1)
 
     def EXP(self):
         type2, value2 = self.POP()
@@ -144,25 +153,29 @@ class VM:
         if type1 == TYPE_NUMBER and type2 == TYPE_NUMBER:
             self.PUSH((TYPE_NUMBER, value1 ** value2))
         else:
-            vm_error(f'Unsupported operator EXP between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator EXP between {type1} and {type2}', self.pc - 1)
 
     def AND(self):
         type2, value2 = self.POP()
         type1, value1 = self.POP()
 
-        if type1 == TYPE_BOOL and type2 == TYPE_BOOL:
-            self.PUSH((TYPE_BOOL, value1 and value2))
+        if type1 == TYPE_NUMBER and type2 == TYPE_NUMBER:
+            self.PUSH((TYPE_NUMBER, value1 & value2))
+        elif type1 == TYPE_BOOL and type2 == TYPE_BOOL:
+            self.PUSH((TYPE_BOOL, value1 & value2))
         else:
-            vm_error(f'Unsupported operator AND between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator AND between {type1} and {type2}', self.pc - 1)
 
     def OR(self):
         type2, value2 = self.POP()
         type1, value1 = self.POP()
 
-        if type1 == TYPE_BOOL and type2 == TYPE_BOOL:
-            self.PUSH((TYPE_BOOL, value1 or value2))
+        if type1 == TYPE_NUMBER and type2 == TYPE_NUMBER:
+            self.PUSH((TYPE_NUMBER, value1 | value2))
+        elif type1 == TYPE_BOOL and type2 == TYPE_BOOL:
+            self.PUSH((TYPE_BOOL, value1 | value2))
         else:
-            vm_error(f'Unsupported operator OR between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator OR between {type1} and {type2}', self.pc - 1)
 
     def XOR(self):
         type2, value2 = self.POP()
@@ -175,7 +188,7 @@ class VM:
         elif (type1 == TYPE_BOOL and type2 == TYPE_NUMBER) or (type1 == TYPE_NUMBER and type2 == TYPE_BOOL):
             self.PUSH((TYPE_BOOL, bool(value1) ^ bool(value2)))
         else:
-            vm_error(f'Unsupported operator XOR between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator XOR between {type1} and {type2}', self.pc - 1)
 
     def EQ(self):
         type2, value2 = self.POP()
@@ -184,7 +197,7 @@ class VM:
         if (type1 == TYPE_NUMBER and type2 == TYPE_NUMBER) or (type1 == TYPE_STRING and type2 == TYPE_STRING) or (type1 == TYPE_BOOL and type2 == TYPE_BOOL):
             self.PUSH((TYPE_BOOL, value1 == value2))
         else:
-            vm_error(f'Unsupported operator EQ between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator EQ between {type1} and {type2}', self.pc - 1)
 
     def NE(self):
         type2, value2 = self.POP()
@@ -193,7 +206,7 @@ class VM:
         if (type1 == TYPE_NUMBER and type2 == TYPE_NUMBER) or (type1 == TYPE_STRING and type2 == TYPE_STRING) or (type1 == TYPE_BOOL and type2 == TYPE_BOOL):
             self.PUSH((TYPE_BOOL, value1 != value2))
         else:
-            vm_error(f'Unsupported operator NE between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator NE between {type1} and {type2}', self.pc - 1)
     
     def GE(self):
         type2, value2 = self.POP()
@@ -202,7 +215,7 @@ class VM:
         if (type1 == TYPE_NUMBER and type2 == TYPE_NUMBER) or (type1 == TYPE_STRING and type2 == TYPE_STRING):
             self.PUSH((TYPE_BOOL, value1 >= value2))
         else:
-            vm_error(f'Unsupported operator GE between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator GE between {type1} and {type2}', self.pc - 1)
 
     def GT(self):
         type2, value2 = self.POP()
@@ -211,7 +224,7 @@ class VM:
         if (type1 == TYPE_NUMBER and type2 == TYPE_NUMBER) or (type1 == TYPE_STRING and type2 == TYPE_STRING): 
             self.PUSH((TYPE_BOOL, value1 > value2))
         else:
-            vm_error(f'Unsupported operator GT between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator GT between {type1} and {type2}', self.pc - 1)
     
     def LE(self):
         type2, value2 = self.POP()
@@ -220,7 +233,7 @@ class VM:
         if (type1 == TYPE_NUMBER and type2 == TYPE_NUMBER) or (type1 == TYPE_STRING and type2 == TYPE_STRING):
             self.PUSH((TYPE_BOOL, value1 <= value2))
         else:
-            vm_error(f'Unsupported operator LE between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator LE between {type1} and {type2}', self.pc - 1)
 
     def LT(self):
         type2, value2 = self.POP()
@@ -229,7 +242,7 @@ class VM:
         if (type1 == TYPE_NUMBER and type2 == TYPE_NUMBER) or (type1 == TYPE_STRING and type2 == TYPE_STRING):
             self.PUSH((TYPE_BOOL, value1 < value2))
         else:
-            vm_error(f'Unsupported operator LT between {type1} and {type2}', self.pc)
+            vm_error(f'Unsupported operator LT between {type1} and {type2}', self.pc - 1)
 
     def PRINT(self):
         type, value = self.POP()
@@ -246,7 +259,18 @@ class VM:
         if type == TYPE_NUMBER:
             self.PUSH((type, -value))
         else:
-            vm_error(f'Unsupported operator NEG at {type}', self.pc)
+            vm_error(f'Unsupported operator NEG at {type}', self.pc - 1)
 
     def LABEL(self, name):
         pass
+
+    def JMP(self, name):
+        self.pc = self.labels[name]
+
+    def JMPZ(self, name):
+        type, value = self.POP()
+        if type == TYPE_BOOL:
+            if not value:
+                self.JMP(name)
+        else:
+            vm_error('Condition is not a boolean expression', self.pc - 1)

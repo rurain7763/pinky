@@ -3,3 +3,10 @@ println true and true
 println true or false
 println true and ~true
 println 3 <= 5 or 4 >= 4
+println ~(3 > 2) or false
+
+if 1 < 3 then
+    println "hello if."
+else
+    println "hello else."
+end

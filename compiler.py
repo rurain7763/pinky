@@ -7,9 +7,14 @@ from defs import *
 class Compiler:
     def __init__(self):
         self.code = []
+        self.label_counter = 0
 
     def emit(self, instruction):
         self.code.append(instruction)
+
+    def make_label(self):
+        self.label_counter += 1
+        return f"LBL{self.label_counter}"
 
     def compile(self, node):
         if isinstance(node, Integer):
@@ -76,7 +81,20 @@ class Compiler:
                 self.emit(('PRINTLN',))
             else:
                 self.emit(('PRINT',))
-
+        elif isinstance(node, IfStmt):
+            self.compile(node.condition)
+            then_label = self.make_label()
+            else_label = self.make_label()
+            exit_label = self.make_label()
+            self.emit(('JMPZ', else_label))
+            self.emit(('LABEL', then_label))
+            self.compile(node.then_stmts)
+            self.emit(('JMP', exit_label))
+            self.emit(('LABEL', else_label))
+            if node.else_stmts != None:
+                self.compile(node.else_stmts)
+            self.emit(('LABEL', exit_label))
+            
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))
         self.compile(root)

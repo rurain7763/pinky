@@ -93,11 +93,13 @@ def pretty_print_instructions(instructions):
     i = 0
     while i < len(instructions):
         if instructions[i][0] == 'LABEL':
-            print(f'{instructions[i][1]}:')
+            print(f'{i:08} {instructions[i][1]}:')
+        elif instructions[i][0].startswith('JMP'):
+            print(f'{i:08}  {instructions[i][0]} {instructions[i][1]}')
         elif len(instructions[i]) > 1: 
-            print(f' {instructions[i][0]} {stringify(instructions[i][1][1])}')
+            print(f'{i:08}  {instructions[i][0]} {stringify(instructions[i][1][1])}')
         else:
-            print(f' {instructions[i][0]}')
+            print(f'{i:08}  {instructions[i][0]}')
         i += 1
 
 def stringify(value):
