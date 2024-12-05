@@ -154,6 +154,19 @@ class Compiler:
                 self.compile(node.else_stmts)
                 self.end_block()
             self.emit(('LABEL', exit_label))
+        elif isinstance(node, WhileStmt):
+            cond_label = self.make_label()
+            do_label = self.make_label()
+            end_label = self.make_label()
+            self.emit(('LABEL', cond_label))
+            self.compile(node.condition)
+            self.emit(('JMPZ', end_label))
+            self.emit(('LABEL', do_label))
+            self.begin_block()
+            self.compile(node.do_stmts)
+            self.end_block()
+            self.emit(('JMP', cond_label))
+            self.emit(('LABEL', end_label))
             
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))
