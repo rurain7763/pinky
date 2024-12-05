@@ -23,7 +23,7 @@ class Environment:
 
         self.vars[name] = value
     
-    def set_value_as_local(self, name, value):
+    def set_local(self, name, value):
         self.vars[name] = value
     
     def get_func(self, name):

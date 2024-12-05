@@ -194,6 +194,13 @@ class Parser:
     def ret_stmt(self):
         self.expect(TOK_RET)
         return RetStmt(self.expr(), self.previous_token().line)
+    
+    def local_assign(self):
+        self.expect(TOK_LOCAL)
+        left = self.expr()
+        self.expect(TOK_ASSIGN)
+        right = self.expr()
+        return LocalAssignment(left, right, self.previous_token().line)
 
     def stmt(self):
         if self.check(TOK_PRINT):
@@ -210,6 +217,8 @@ class Parser:
             return self.func_decl()
         elif self.check(TOK_RET):
             return self.ret_stmt()
+        elif self.check(TOK_LOCAL):
+            return self.local_assign()
         else:
             left = self.expr()
             if self.match(TOK_ASSIGN):

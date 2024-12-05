@@ -133,6 +133,9 @@ class Interpreter:
         elif isinstance(node, Assignment):
             r_type, r_value = self.interpret(node.right, env)
             env.set_value(node.left.name, (r_type, r_value))
+        elif isinstance(node, LocalAssignment):
+            r_type, r_value = self.interpret(node.right, env)
+            env.set_local(node.left.name, (r_type, r_value))
         elif isinstance(node, WhileStmt):
             type, value = self.interpret(node.condition, env)
             if type != TYPE_BOOL:

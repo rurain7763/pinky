@@ -15,6 +15,10 @@ def print_stmt(stmt, indent = 0):
         print(f'{' ' * indent}Assignment(')
         pretty_print_ast(stmt.left, indent + 1)
         pretty_print_ast(stmt.right, indent + 1)
+    elif isinstance(stmt, LocalAssignment):
+        print(f'{' ' * indent}LoacalAssignment(')
+        pretty_print_ast(stmt.left, indent + 1)
+        pretty_print_ast(stmt.right, indent + 1)
     elif isinstance(stmt, WhileStmt):
         print(f'{' ' * indent}WhileStmt(')
         pretty_print_ast(stmt.condition, indent + 1)

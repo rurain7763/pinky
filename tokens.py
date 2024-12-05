@@ -53,6 +53,7 @@ TOK_END        = 'TOK_END'
 TOK_PRINT      = 'TOK_PRINT'
 TOK_PRINTLN    = 'TOK_PRINTLN'
 TOK_RET        = 'TOK_RET'
+TOK_LOCAL      = 'TOK_LOCAL'      
 
 ###############################################################################
 # Dictionary mapping keywords and their token types
@@ -74,6 +75,7 @@ keywords = {
   'print'   : TOK_PRINT,
   'println' : TOK_PRINTLN,
   'ret'     : TOK_RET,
+  'local'   : TOK_LOCAL
 }
 
 class Token:

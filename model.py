@@ -126,6 +126,14 @@ class Assignment(Stmt):
         self.right = right
         self.line = line
 
+class LocalAssignment(Stmt):
+    def __init__(self, left : Expr, right : Expr, line):
+        assert isinstance(left, Expr), left
+        assert isinstance(right, Expr), right
+        self.left = left
+        self.right = right
+        self.line = line
+
 class ForStmt(Stmt):
     def __init__(self, assignment : Assignment, condition_val : Expr, step_val : Expr, do_stmts : Stmts, line):
         assert isinstance(assignment, Assignment), assignment
