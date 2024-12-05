@@ -47,10 +47,10 @@ import codecs
 #
 # Instructions to load and store variables
 #
-#      ('LOAD', name)        # Push a global variable name from memory to the stack
-#      ('STORE, name)        # Save top of the stack into global variable by name
-#      ('LOAD_LOCAL', name)  # Push a local variable name from memory to the stack
-#      ('STORE_LOCAL, name)  # Save top of the stack to local variable by name
+#      ('LOAD_GLOBAL', idx)        # Push a global variable name from memory to the stack
+#      ('STORE_GLOBAL, idx)        # Save top of the stack into global variable by idx
+#      ('LOAD_LOCAL', idx)         # Push a local variable name from memory to the stack
+#      ('STORE_LOCAL, idx)         # Save top of the stack to local variable by idx
 #
 # Instructions to manage control-flow (if-else, while, etc.)
 #
@@ -95,7 +95,7 @@ class VM:
     def POP(self):
         self.sp -= 1
         return self.stack[self.sp]
-
+    
     def ADD(self):
         type2, value2 = self.POP()
         type1, value1 = self.POP()
@@ -276,8 +276,14 @@ class VM:
         else:
             vm_error('Condition is not a boolean expression', self.pc - 1)
     
-    def STORE_GLOBAL(self, name):
-        self.globals[name] = self.POP()
+    def STORE_GLOBAL(self, idx):
+        self.globals[idx] = self.POP()
 
-    def LOAD_GLOBAL(self, name):
-        self.PUSH(self.globals[name])
+    def LOAD_GLOBAL(self, idx):
+        self.PUSH(self.globals[idx])
+
+    def STORE_LOCAL(self, idx):
+        self.stack[idx] = self.POP()
+
+    def LOAD_LOCAL(self, idx):
+        self.PUSH(self.stack[idx])
