@@ -64,6 +64,7 @@ class VM:
     def __init__(self):
         self.stack = []
         self.labels = {}
+        self.globals = {}
         self.pc = 0
         self.sp = 0
         self.is_running = False
@@ -274,3 +275,9 @@ class VM:
                 self.JMP(name)
         else:
             vm_error('Condition is not a boolean expression', self.pc - 1)
+    
+    def STORE_GLOBAL(self, name):
+        self.globals[name] = self.POP()
+
+    def LOAD_GLOBAL(self, name):
+        self.PUSH(self.globals[name])

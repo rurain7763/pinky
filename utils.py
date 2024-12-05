@@ -100,6 +100,8 @@ def pretty_print_instructions(instructions):
             print(f'{i:08} {instructions[i][1]}:')
         elif instructions[i][0].startswith('JMP'):
             print(f'{i:08}  {instructions[i][0]} {instructions[i][1]}')
+        elif instructions[i][0].endswith('GLOBAL'):
+            print(f'{i:08}  {instructions[i][0]} {instructions[i][1]}')
         elif len(instructions[i]) > 1: 
             print(f'{i:08}  {instructions[i][0]} {stringify(instructions[i][1][1])}')
         else:
@@ -127,6 +129,11 @@ def lexeing_error(msg, lineno):
     sys.exit(1)
 
 def runtime_error(msg, lineno):
+    print(f'{Colors.FAIL}[Line {lineno}] {msg}{Colors.ENDC}')
+    import sys
+    sys.exit(1)
+
+def compile_error(msg, lineno):
     print(f'{Colors.FAIL}[Line {lineno}] {msg}{Colors.ENDC}')
     import sys
     sys.exit(1)
