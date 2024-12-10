@@ -4,9 +4,13 @@ from utils import *
 from state import *
 from defs import *
 
+SYM_VAR = 'SYM_VAR'
+SYM_FUNC = 'SYM_FUNC'
+
 class Symbol:
-    def __init__(self, name, depth = 0):
+    def __init__(self, name, symtype = SYM_VAR, depth = 0):
         self.name = name
+        self.systype = symtype
         self.depth = depth
 
 class Compiler:
@@ -14,6 +18,7 @@ class Compiler:
         self.code = []
         self.locals = []
         self.globals = []
+        self.functions = []
         self.scope_depth = 0
         self.label_counter = 0
 
@@ -24,7 +29,14 @@ class Compiler:
         self.label_counter += 1
         return f"LBL{self.label_counter}"
     
-    def get_symbol(self, name):
+    def get_func_symbol(self, name):
+        for symbol in reversed(self.functions):
+            if(symbol.name == name):
+                return symbol
+            
+        return None
+
+    def get_var_symbol(self, name):
         for idx, symbol in reversed(list(enumerate(self.locals))):
             if(symbol.name == name):
                 return (symbol, idx)
@@ -108,9 +120,9 @@ class Compiler:
                 self.compile(stmt)
         elif isinstance(node, Assignment):
             self.compile(node.right)
-            symbol, idx = self.get_symbol(node.left.name)
+            symbol, idx = self.get_var_symbol(node.left.name)
             if not symbol:
-                new_symbol = Symbol(node.left.name, self.scope_depth)
+                new_symbol = Symbol(node.left.name, SYM_VAR, self.scope_depth)
                 if self.scope_depth == 0:
                     self.globals.append(new_symbol)
                     self.emit(('STORE_GLOBAL', len(self.globals) - 1))
@@ -123,7 +135,7 @@ class Compiler:
                 else:
                     self.emit(('STORE_LOCAL', idx))
         elif isinstance(node, Identifier):
-            symbol, idx = self.get_symbol(node.name)
+            symbol, idx = self.get_var_symbol(node.name)
             if not symbol:
                 compile_error(f'Variable {node.name} is not defined', node.line)
             else:
@@ -175,11 +187,11 @@ class Compiler:
             self.emit(('LABEL', assign_label))
             self.begin_block()
             self.compile(node.assignment.right)
-            new_symbol = Symbol(node.assignment.left.name, self.scope_depth)
+            new_symbol = Symbol(node.assignment.left.name, SYM_VAR, self.scope_depth)
             self.locals.append(new_symbol)
             self.emit(('LABEL', cond_label))
 
-            symbol, idx = self.get_symbol(node.assignment.left.name)
+            symbol, idx = self.get_var_symbol(node.assignment.left.name)
             cond_val = node.condition_val.value
             if node.step_val != None:
                 step_val = node.step_val.value
@@ -198,6 +210,29 @@ class Compiler:
             self.emit(('JMP', cond_label))
             self.emit(('LABEL', end_label))
             self.end_block()
+        elif isinstance(node, FuncDecl):
+            func_symbol = self.get_func_symbol(node.identifier.name)
+            if func_symbol:
+                compile_error(f'A function with the name {node.identifier.name} was already declared', node.line)
+            
+            var_symbol, idx = self.get_var_symbol(node.identifier.name)
+            if var_symbol:
+                compile_error(f'A function with the name {node.identifier.name} was already defined in this scope', node.line)
+
+            new_symbol = Symbol(node.identifier.name, SYM_FUNC, self.scope_depth)
+            self.functions.append(new_symbol)
+            exit_label = self.make_label()
+            self.emit(('JMP', exit_label))
+            self.emit(('LABEL', new_symbol.name))
+            self.begin_block()
+            self.compile(node.body_stmts)
+            self.end_block()
+            self.emit(('RTS',))
+            self.emit(('LABEL', exit_label))
+        elif isinstance(node, FuncCallStmt):
+            self.compile(node.func_call)
+        elif isinstance(node, FuncCall):
+            pass
             
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))

@@ -60,9 +60,15 @@ import codecs
 #      ('JSR', name)         # Jump to subroutine/function and keep track of the returning PC
 #      ('RTS',)              # Return from subroutine/function
 
+class Frame:
+    def __init__(self, ret_pc, fp):
+        self.ret_pc = ret_pc
+        self.fp = fp
+
 class VM:
     def __init__(self):
         self.stack = []
+        self.frames = []
         self.labels = {}
         self.globals = {}
         self.pc = 0

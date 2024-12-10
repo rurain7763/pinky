@@ -1,31 +1,7 @@
-x := 100
-y := 200
+x := 0
 
-if x > 0 then
-  a := 10
-  b := 20
-  if x > 1 then
-    c := 3
-    a := c + 2
-    println(a)
-    println(c)
-    if x > 2 then
-      d := 2 + b + a
-      println(d)
-    else
-      c := 0
-      e := 1 + c - 4 + (a - 2)
-    end
-  end
+func say()
+  println "hello"
 end
 
-i := 0
-while i <= 10 do
-    res := 2 * i
-    println "2 * " + i + " = " + res
-    i := i + 1
-end
-
-for i := 1, 10 do
-    println i
-end
+say()
