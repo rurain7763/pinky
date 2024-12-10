@@ -25,3 +25,7 @@ while i <= 10 do
     println "2 * " + i + " = " + res
     i := i + 1
 end
+
+for i := 1, 10 do
+    println i
+end

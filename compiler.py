@@ -25,11 +25,11 @@ class Compiler:
         return f"LBL{self.label_counter}"
     
     def get_symbol(self, name):
-        for idx, symbol in enumerate(self.locals):
+        for idx, symbol in reversed(list(enumerate(self.locals))):
             if(symbol.name == name):
                 return (symbol, idx)
 
-        for idx, symbol in enumerate(self.globals):
+        for idx, symbol in reversed(list(enumerate(self.globals))):
             if symbol.name == name:
                 return (symbol, idx)
             
@@ -116,7 +116,7 @@ class Compiler:
                     self.emit(('STORE_GLOBAL', len(self.globals) - 1))
                 else:
                     self.locals.append(new_symbol)
-                    # self.emit(('STORE_LOCAL', self.num_locals))
+                    self.emit(('SET_SLOT', (len(self.locals) - 1, node.left.name)))
             else:
                 if symbol.depth == 0:
                     self.emit(('STORE_GLOBAL', idx))
@@ -167,6 +167,37 @@ class Compiler:
             self.end_block()
             self.emit(('JMP', cond_label))
             self.emit(('LABEL', end_label))
+        elif isinstance(node, ForStmt):
+            assign_label = self.make_label()
+            cond_label = self.make_label()
+            do_label = self.make_label()
+            end_label = self.make_label()
+            self.emit(('LABEL', assign_label))
+            self.begin_block()
+            self.compile(node.assignment.right)
+            new_symbol = Symbol(node.assignment.left.name, self.scope_depth)
+            self.locals.append(new_symbol)
+            self.emit(('LABEL', cond_label))
+
+            symbol, idx = self.get_symbol(node.assignment.left.name)
+            cond_val = node.condition_val.value
+            if node.step_val != None:
+                step_val = node.step_val.value
+            else:
+                step_val = 1
+
+            self.emit(('LOAD_LOCAL', idx))
+            self.emit(('PUSH', (TYPE_NUMBER, cond_val)))
+            self.emit(('LE',))
+            self.emit(('JMPZ', end_label))
+            self.compile(node.do_stmts)
+            self.emit(('LOAD_LOCAL', idx))
+            self.emit(('PUSH', (TYPE_NUMBER, step_val)))
+            self.emit(('ADD',))
+            self.emit(('STORE_LOCAL', idx))
+            self.emit(('JMP', cond_label))
+            self.emit(('LABEL', end_label))
+            self.end_block()
             
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))

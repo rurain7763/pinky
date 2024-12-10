@@ -285,5 +285,8 @@ class VM:
     def STORE_LOCAL(self, idx):
         self.stack[idx] = self.POP()
 
+    def SET_SLOT(self, slot):
+        pass
+
     def LOAD_LOCAL(self, idx):
         self.PUSH(self.stack[idx])
