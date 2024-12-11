@@ -1,10 +1,23 @@
-x := 0
-
-func say()
-  println "hello"
-  println "world"
+func max(a, b)
+  if a > b then
+    println "a is greater"
+  else
+    println "b is greater"
+  end
 end
 
-say()
+func print_value(a, b, c)
+  println a + " " + b + " " + c
+end
 
-println "end program"
+func say()
+  println "Hello"
+  println "World"
+end
+
+x := 0
+y := 1
+
+max(1, 2)
+say()
+print_value(5, 3, 2 + 5 * 2)

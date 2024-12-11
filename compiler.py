@@ -8,10 +8,11 @@ SYM_VAR = 'SYM_VAR'
 SYM_FUNC = 'SYM_FUNC'
 
 class Symbol:
-    def __init__(self, name, symtype = SYM_VAR, depth = 0):
+    def __init__(self, name, symtype = SYM_VAR, depth = 0, arg_cnt = 0):
         self.name = name
         self.systype = symtype
         self.depth = depth
+        self.arg_cnt = arg_cnt
 
 class Compiler:
     def __init__(self):
@@ -219,19 +220,36 @@ class Compiler:
             if var_symbol:
                 compile_error(f'A function with the name {node.identifier.name} was already defined in this scope', node.line)
 
-            new_symbol = Symbol(node.identifier.name, SYM_FUNC, self.scope_depth)
+            new_symbol = Symbol(node.identifier.name, SYM_FUNC, self.scope_depth, len(node.params))
             self.functions.append(new_symbol)
             exit_label = self.make_label()
             self.emit(('JMP', exit_label))
             self.emit(('LABEL', new_symbol.name))
+
             self.begin_block()
+            for parm in node.params:
+                new_symbol = Symbol(parm.identifier.name, SYM_VAR, self.scope_depth)
+                self.locals.append(new_symbol)
+                self.emit(('SET_SLOT', (len(self.locals) - 1, parm.identifier.name)))
+
             self.compile(node.body_stmts)
             self.end_block()
+
             self.emit(('RTS',))
             self.emit(('LABEL', exit_label))
         elif isinstance(node, FuncCallStmt):
             self.compile(node.func_call)
         elif isinstance(node, FuncCall):
+            func_symbol = self.get_func_symbol(node.identifier.name)
+            if not func_symbol:
+                compile_error(f'A function with the name {node.identifier.name} was not declared', node.line)
+
+            if len(node.args) != func_symbol.arg_cnt:
+                compile_error(f'A function with the name {node.identifier.name} expected {func_symbol.arg_cnt} params', node.line)
+
+            for arg in node.args:
+                self.compile(arg)
+
             self.emit(('JSR', node.identifier.name))
 
     def generate_code(self, root):
