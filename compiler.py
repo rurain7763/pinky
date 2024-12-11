@@ -250,6 +250,7 @@ class Compiler:
             for arg in node.args:
                 self.compile(arg)
 
+            self.emit(('PUSH', (TYPE_NUMBER, len(node.args))))
             self.emit(('JSR', node.identifier.name))
 
     def generate_code(self, root):

@@ -253,12 +253,12 @@ class VM:
             vm_error(f'Unsupported operator LT between {type1} and {type2}', self.pc - 1)
 
     def PRINT(self):
-        type, value = self.POP()
+        _, value = self.POP()
         value = stringify(value)
         print(codecs.escape_decode(bytes(value, 'utf-8'))[0].decode('utf-8'), end = '')
 
     def PRINTLN(self):
-        type, value = self.POP()
+        _, value = self.POP()
         value = stringify(value)
         print(codecs.escape_decode(bytes(value, 'utf-8'))[0].decode('utf-8'), end = '\n')
 
@@ -269,7 +269,7 @@ class VM:
         else:
             vm_error(f'Unsupported operator NEG at {type}', self.pc - 1)
 
-    def LABEL(self, name):
+    def LABEL(self, _):
         pass
 
     def JMP(self, name):
@@ -290,16 +290,23 @@ class VM:
         self.PUSH(self.globals[idx])
 
     def STORE_LOCAL(self, idx):
+        if len(self.frames) > 0:
+            idx += self.frames[-1].fp
+
         self.stack[idx] = self.POP()
 
-    def SET_SLOT(self, slot):
+    def SET_SLOT(self, _):
         pass
 
     def LOAD_LOCAL(self, idx):
+        if len(self.frames) > 0:
+            idx += self.frames[-1].fp
+
         self.PUSH(self.stack[idx])
     
     def JSR(self, name):
-        new_frame = Frame(name, self.pc, self.sp)
+        _, arg_cnt = self.POP()
+        new_frame = Frame(name, self.pc, self.sp - arg_cnt)
         self.frames.append(new_frame)
         self.pc = self.labels[name]
 
