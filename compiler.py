@@ -235,6 +235,7 @@ class Compiler:
             self.compile(node.body_stmts)
             self.end_block()
 
+            self.emit(('PUSH', (TYPE_NUMBER, 0)))
             self.emit(('RTS',))
             self.emit(('LABEL', exit_label))
         elif isinstance(node, FuncCallStmt):
@@ -252,6 +253,9 @@ class Compiler:
 
             self.emit(('PUSH', (TYPE_NUMBER, len(node.args))))
             self.emit(('JSR', node.identifier.name))
+        elif isinstance(node, RetStmt):
+            self.compile(node.value)
+            self.emit(('RST',))
 
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))

@@ -310,6 +310,6 @@ class VM:
         self.frames.append(new_frame)
         self.pc = self.labels[name]
 
-    def RTS(self):
+    def RST(self):
         last_frame = self.frames.pop()
         self.pc = last_frame.ret_pc

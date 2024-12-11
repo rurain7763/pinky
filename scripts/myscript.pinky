@@ -1,29 +1,10 @@
-x := 5
-
-func func_3(x, y)
-  result := x * y
-  println result
+func mul(a, b)
+  ret a * b
 end
 
-func func_2(x, y)
-  result := x + y
-  func_3(7, 9 + y)
-  println result
+func add(a, b)
+  ret a + b
 end
 
-func func_1(a, b, c)
-  println a 
-  println b
-  func_2(2, 3)
-  println c
-end
-
-func_1(1 + 2, 2 + 3, 3 + x)
-
-println "Goodbye!"
-
---> 3
---> 5
---> 84
---> 5
---> 8
+println add(1, 2)
+println mul(2, 5)
