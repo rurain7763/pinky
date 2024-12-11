@@ -310,6 +310,13 @@ class VM:
         self.frames.append(new_frame)
         self.pc = self.labels[name]
 
-    def RST(self):
+    def RTS(self):
         last_frame = self.frames.pop()
+
+        ret = self.POP()
+        while last_frame.fp < self.sp:
+            self.POP()
+            
+        self.PUSH(ret)
+
         self.pc = last_frame.ret_pc
