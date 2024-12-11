@@ -232,8 +232,8 @@ class Compiler:
         elif isinstance(node, FuncCallStmt):
             self.compile(node.func_call)
         elif isinstance(node, FuncCall):
-            pass
-            
+            self.emit(('JSR', node.identifier.name))
+
     def generate_code(self, root):
         self.emit(('LABEL', 'START'))
         self.compile(root)

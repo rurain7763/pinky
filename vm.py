@@ -61,7 +61,8 @@ import codecs
 #      ('RTS',)              # Return from subroutine/function
 
 class Frame:
-    def __init__(self, ret_pc, fp):
+    def __init__(self, name, ret_pc, fp):
+        self.name = name
         self.ret_pc = ret_pc
         self.fp = fp
 
@@ -296,3 +297,12 @@ class VM:
 
     def LOAD_LOCAL(self, idx):
         self.PUSH(self.stack[idx])
+    
+    def JSR(self, name):
+        new_frame = Frame(name, self.pc, self.sp)
+        self.frames.append(new_frame)
+        self.pc = self.labels[name]
+
+    def RTS(self):
+        last_frame = self.frames.pop()
+        self.pc = last_frame.ret_pc

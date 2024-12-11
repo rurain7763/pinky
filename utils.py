@@ -104,6 +104,8 @@ def pretty_print_instructions(instructions):
             print(f'{i:08}  {instructions[i][0]} {instructions[i][1]}')
         elif instructions[i][0] == 'SET_SLOT':
             print(f'{i:08}  {instructions[i][0]} {instructions[i][1][0]} ({instructions[i][1][1]})')
+        elif instructions[i][0] == 'JSR':
+            print(f'{i:08}  {instructions[i][0]} {instructions[i][1]}')
         elif len(instructions[i]) > 1: 
             print(f'{i:08}  {instructions[i][0]} {stringify(instructions[i][1][1])}')
         else:
